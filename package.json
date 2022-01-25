@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "es-checker": "^1.4.2"
+    "dotenv": "^14.3.0"
   }
 }
