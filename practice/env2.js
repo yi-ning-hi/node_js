@@ -1,5 +1,5 @@
 require('dotenv').config()
-//dotenv 會尋找專案裡的.env
+//dotenv 會尋找專案裡的根目錄.env
 //require('dotenv').config({ path: '/custom/path/to/.env' })
 //有可能有多個.env檔，path指定哪個.env的路徑
 
