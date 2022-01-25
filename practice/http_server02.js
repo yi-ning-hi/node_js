@@ -5,7 +5,7 @@ const server = http.createServer((req, res)=>{
         'Content-Type': 'text/html; charset=utf-8'
     });
 
-    fs.writeFile('./headers.txt', JSON.stringify(req.headers, null, 4), error => {
+    fs.writeFile(__dirname+'/headers.txt', JSON.stringify(req.headers, null, 4), error => {
         if (error) {
             console.log(error);
             res.end("錯誤");
