@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 // const upload = multer({ dest: 'tmp_uploads/' })
-const upload = require(__dirname+'/modules/upload-imgs')
+const upload = require(__dirname + '/modules/upload-imgs')
 const fs = require('fs').promises;
 
 const app = express();
@@ -76,8 +76,10 @@ app.get('/try-post-form', (req, res) => {
 app.post('/try-post-form', (req, res) => {
     res.render('try-post-form', req.body);
 });
-app.post('/try-upload', upload.single('avatar'), async(req, res) => {
+app.post('/try-upload', upload.single('avatar'), async (req, res) => {
+
     res.json(req.file);
+    //(req.file)拿到的是obj
     // const types = ['image/jpeg', 'image/png']
     // if (req.file && req.file.originalname) {
     //     if (types.includes(req.file.mimetype)) {
@@ -90,6 +92,27 @@ app.post('/try-upload', upload.single('avatar'), async(req, res) => {
     // res.send('bad');
 });
 //(single：單張圖片，avatar：欄位名稱)
+
+
+app.post('/try-uploads', upload.array('photos'), async (req, res) => {
+
+    const result = req.files.map(function({mimetype,filename,size}){
+        return{mimetype,filename,size};
+    });
+    //{mimetype,filename,size}三個變成區域變數
+
+
+    // const result = req.files.map(el => {
+    //     return {
+    //         "mimetype": el.mimetype,
+    //         "filename": el.filename,
+    //         "size": el.size
+    //     }
+    // });
+
+    res.json(result);
+    //(req.files)拿到的是array
+});
 
 //********* 所有路由的最後面
 app.use((req, res) => {
