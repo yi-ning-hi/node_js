@@ -1,0 +1,48 @@
+<%- include('parts/html-head') %>
+<%- include('parts/navbar') %>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <form>
+                        <div class="mb-3">
+                          <label for="exampleInputEmail1" class="form-label">欄位</label>
+                          <select class="form-select" id="orderByCol" name="orderByCol">
+                            <option value="1">員工編號</option>
+                            <option value="2">姓名</option>
+                            <option value="3">年齡</option>
+                          </select>
+                        </div>
+                        <div class="mb-3">
+                          <label for="exampleInputPassword1" class="form-label">規則</label>
+                          <select class="form-select" id="orderByRule" name="orderByRule">
+                            <option value="1">由小到大</option>
+                            <option value="2">由大到小</option>
+                          </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">送出
+                        </button>
+                      </form>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">員工編號</th>
+                    <th scope="col">姓名</th>
+                    <th scope="col">年齡</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <% for(let i of sales){ %>
+                <tr>
+                    <td id=""><%= i.id %> </td>
+                    <td id=""><%= i.name %> </td>
+                    <td id=""><%= i.age %> </td>
+                </tr>
+                        <% } %>
+                </tbody>
+              </table>
+                
+        </div>
+<%- include('parts/scripts') %>
+<%- include('parts/html-foot') %>

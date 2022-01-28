@@ -1,0 +1,17 @@
+
+
+#回應
+res.end()
+res.send() 在使用時就會設定檔頭然後送出去，不要重複
+res.json()轉成json格式，在使用時就會設定檔頭然後送出去，不要重複
+res.render()在使用時就會設定檔頭然後送出去，不要重複
+res.redirect()轉向，在使用時就會設定檔頭然後送出去，不要重複
+
+
+#輸入的資料
+req.query #query string (GET)
+req.body  #表單的資料 (POST)
+
+
+
+middleware #中介軟體
