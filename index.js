@@ -2,7 +2,8 @@ console.log(process.env.NODE_ENV);
 require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
-const upload = multer({ dest: 'tmp_uploads/' })
+// const upload = multer({ dest: 'tmp_uploads/' })
+const upload = require(__dirname+'/modules/upload-imgs')
 const fs = require('fs').promises;
 
 const app = express();
@@ -76,16 +77,17 @@ app.post('/try-post-form', (req, res) => {
     res.render('try-post-form', req.body);
 });
 app.post('/try-upload', upload.single('avatar'), async(req, res) => {
-    const types = ['image/jpeg', 'image/png']
-    if (req.file && req.file.originalname) {
-        if (types.includes(req.file.mimetype)) {
-            await fs.rename(req.file.path,__dirname+'/public/img/'+req.file.originalname);
-            return res.redirect('/img/'+req.file.originalname);
-        }else{
-            return res.send('檔案類型不符合');
-        }
-    }
-    res.send('bad');
+    res.json(req.file);
+    // const types = ['image/jpeg', 'image/png']
+    // if (req.file && req.file.originalname) {
+    //     if (types.includes(req.file.mimetype)) {
+    //         await fs.rename(req.file.path,__dirname+'/public/img/'+req.file.originalname);
+    //         return res.redirect('/img/'+req.file.originalname);
+    //     }else{
+    //         return res.send('檔案類型不符合');
+    //     }
+    // }
+    // res.send('bad');
 });
 //(single：單張圖片，avatar：欄位名稱)
 
