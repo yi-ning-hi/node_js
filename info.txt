@@ -12,6 +12,10 @@ res.redirect()轉向，在使用時就會設定檔頭然後送出去，不要重
 req.query #query string (GET)
 req.body  #表單的資料 (POST)
 
+req.params #路徑上的變數代稱
+req.file #multer 檔案上傳
+req.files #multer 檔案上傳
+
 
 
 middleware #中介軟體

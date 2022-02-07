@@ -17,11 +17,18 @@ app.set('view engine', 'ejs')
 //     res.send('<h2>動態內容</h2>');
 // });
 
+// Top-level middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static('public'));
 //use不管什麼方法都會進來
 
+//自訂的 頂層 middleware
+app.use((req,res,next)=>{
+    res.locals.shin = '哈囉';
+    // res.send('ooooo'); //回應之後，不會往下個路由規則
+    next();
+});
 
 app.get('/', (req, res) => {
     res.render('home', { name: 'Ning' });
@@ -96,8 +103,8 @@ app.post('/try-upload', upload.single('avatar'), async (req, res) => {
 
 app.post('/try-uploads', upload.array('photos'), async (req, res) => {
 
-    const result = req.files.map(function({mimetype,filename,size}){
-        return{mimetype,filename,size};
+    const result = req.files.map(({mimetype,filename,size})=>{
+        return {mimetype,filename,size};
     });
     //{mimetype,filename,size}三個變成區域變數
 
@@ -114,6 +121,32 @@ app.post('/try-uploads', upload.array('photos'), async (req, res) => {
     //(req.files)拿到的是array
 });
 
+app.get('/my-params1/:action/:id',(req,res)=>{
+    res.json(req.params);
+});
+
+app.get('/my-params2/:action?/:id?',(req,res)=>{
+    res.json(req.params);
+});
+app.get('/my-params3/*/*?',(req,res)=>{
+    res.json(req.params);
+});
+
+app.get(['/xxx','/yyy'],(req,res)=>{
+    res.json({x:'y',url:req.url});
+});
+
+app.get(/^\/m\/09\d{2}-?\d{3}-?\d{3}$/i,(req,res)=>{
+    let u = req.url.split('?')[0];
+    u = u.slice(3);
+    //i不區分大小寫
+    //用空字串取代掉所有的-
+    u = u.replace(/-/g,''); //u = u.split('-').join('');
+
+    res.json({mobile:u});
+});
+
+app.use('/admin2',require('./routes/admin2'));
 //********* 所有路由的最後面
 app.use((req, res) => {
     // res.type('text/plain')
