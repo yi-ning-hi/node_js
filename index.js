@@ -2,12 +2,14 @@ console.log(process.env.NODE_ENV);
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
+const MysqlStore = require('express-mysql-session')(session);
 const moment = require('moment-timezone');
 const multer = require('multer');
 // const upload = multer({ dest: 'tmp_uploads/' })
 const upload = require(__dirname + '/modules/upload-imgs')
 const fs = require('fs').promises;
 const db = require('./modules/connect-db');
+const sessionStore = new MysqlStore({},db)
 
 const app = express();
 
@@ -29,6 +31,7 @@ app.use(session({
     saveUninitialized:false,//儲存未初始化
     resave:false,
     secret:'jkfjsiokdfcqwvfvlksfvdjhjvuwrfsjhfweeyyyyHHHJoirkofjvj',
+    store: sessionStore,
     cookie:{
         maxAge:1200000
     },
@@ -159,6 +162,7 @@ app.get(/^\/m\/09\d{2}-?\d{3}-?\d{3}$/i,(req,res)=>{
 });
 
 app.use('/admin2',require('./routes/admin2'));
+app.use('/address-book',require('./routes/address-book'));
 
 app.get('/try-session',(req,res)=>{
 req.session.my_var = req.session.my_var || 0;
@@ -177,7 +181,7 @@ app.get('/try-moment',(req,res)=>{
     });
 
 app.get('/try-db',async(req,res)=>{
-        const sql = "SELECT * FROM `room-detail` LIMIT 5";
+        const sql = "SELECT * FROM address_book LIMIT 5";
 
         const [rs, fields] = await db.query(sql);
         res.json(rs);
