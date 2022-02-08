@@ -1,6 +1,8 @@
 console.log(process.env.NODE_ENV);
 require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
+const moment = require('moment-timezone');
 const multer = require('multer');
 // const upload = multer({ dest: 'tmp_uploads/' })
 const upload = require(__dirname + '/modules/upload-imgs')
@@ -21,6 +23,15 @@ app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static('public'));
+
+app.use(session({
+    saveUninitialized:false,//儲存未初始化
+    resave:false,
+    secret:'jkfjsiokdfcqwvfvlksfvdjhjvuwrfsjhfweeyyyyHHHJoirkofjvj',
+    cookie:{
+        maxAge:1200000
+    },
+}));
 //use不管什麼方法都會進來
 
 //自訂的 頂層 middleware
@@ -147,6 +158,22 @@ app.get(/^\/m\/09\d{2}-?\d{3}-?\d{3}$/i,(req,res)=>{
 });
 
 app.use('/admin2',require('./routes/admin2'));
+
+app.get('/try-session',(req,res)=>{
+req.session.my_var = req.session.my_var || 0;
+req.session.my_var++;
+res.json(req.session);
+});
+
+app.get('/try-moment',(req,res)=>{
+    const fm = 'YYYY-MM-DD HH:mm:ss';
+    res.json({
+        mo1: moment(new Date()).format(fm),
+        mo2: moment().tz('Europe/London').format(fm),
+        mo3: moment(req.session.cookie.expires).format(fm),
+        mo4: moment(req.session.cookie.expires).tz('Europe/London').format(fm),
+    })
+    });
 //********* 所有路由的最後面
 app.use((req, res) => {
     // res.type('text/plain')
