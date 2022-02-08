@@ -7,6 +7,7 @@ const multer = require('multer');
 // const upload = multer({ dest: 'tmp_uploads/' })
 const upload = require(__dirname + '/modules/upload-imgs')
 const fs = require('fs').promises;
+const db = require('./modules/connect-db');
 
 const app = express();
 
@@ -174,6 +175,13 @@ app.get('/try-moment',(req,res)=>{
         mo4: moment(req.session.cookie.expires).tz('Europe/London').format(fm),
     })
     });
+
+app.get('/try-db',async(req,res)=>{
+        const sql = "SELECT * FROM `room-detail` LIMIT 5";
+
+        const [rs, fields] = await db.query(sql);
+        res.json(rs);
+        });
 //********* 所有路由的最後面
 app.use((req, res) => {
     // res.type('text/plain')
