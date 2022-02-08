@@ -24,6 +24,10 @@ router.get('/list',async(req,res)=>{
     if(totalRows){
         output.totalPages = Math.ceil(totalRows/perPage);
         output.totalRows = totalRows;
+
+        const sql =  `SELECT * FROM address_book LIMIT ${perPage*(page-1)},${perPage}`;
+        const [rs2] = await db.query(sql);
+        output.rows = rs2;
     }
 
     res.json(output);

@@ -16,6 +16,7 @@ req.params #路徑上的變數代稱
 req.file #multer 檔案上傳
 req.files #multer 檔案上傳
 
+req.session
 
 
 middleware #中介軟體
