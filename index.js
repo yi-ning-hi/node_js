@@ -9,7 +9,7 @@ const multer = require('multer');
 const upload = require(__dirname + '/modules/upload-imgs')
 const fs = require('fs').promises;
 const db = require('./modules/connect-db');
-const sessionStore = new MysqlStore({},db)
+const sessionStore = new MysqlStore({}, db)
 
 const app = express();
 
@@ -28,20 +28,24 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.use(session({
-    saveUninitialized:false,//儲存未初始化
-    resave:false,
-    secret:'jkfjsiokdfcqwvfvlksfvdjhjvuwrfsjhfweeyyyyHHHJoirkofjvj',
+    saveUninitialized: false,//儲存未初始化
+    resave: false,
+    secret: 'jkfjsiokdfcqwvfvlksfvdjhjvuwrfsjhfweeyyyyHHHJoirkofjvj',
     store: sessionStore,
-    cookie:{
-        maxAge:1200000
+    cookie: {
+        maxAge: 1200000
     },
 }));
 //use不管什麼方法都會進來
 
 //自訂的 頂層 middleware
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
     res.locals.shin = '哈囉';
     // res.send('ooooo'); //回應之後，不會往下個路由規則
+
+    // template helper functions 樣版輔助函式
+    res.locals.toDateString = d => moment(d).format('YYYY-MM-DD');
+    res.locals.toDatetimeString = d => moment(d).format('YYYY-MM-DD HH:mm:ss');
     next();
 });
 
@@ -118,8 +122,8 @@ app.post('/try-upload', upload.single('avatar'), async (req, res) => {
 
 app.post('/try-uploads', upload.array('photos'), async (req, res) => {
 
-    const result = req.files.map(({mimetype,filename,size})=>{
-        return {mimetype,filename,size};
+    const result = req.files.map(({ mimetype, filename, size }) => {
+        return { mimetype, filename, size };
     });
     //{mimetype,filename,size}三個變成區域變數
 
@@ -136,41 +140,41 @@ app.post('/try-uploads', upload.array('photos'), async (req, res) => {
     //(req.files)拿到的是array
 });
 
-app.get('/my-params1/:action/:id',(req,res)=>{
+app.get('/my-params1/:action/:id', (req, res) => {
     res.json(req.params);
 });
 
-app.get('/my-params2/:action?/:id?',(req,res)=>{
+app.get('/my-params2/:action?/:id?', (req, res) => {
     res.json(req.params);
 });
-app.get('/my-params3/*/*?',(req,res)=>{
+app.get('/my-params3/*/*?', (req, res) => {
     res.json(req.params);
 });
 
-app.get(['/xxx','/yyy'],(req,res)=>{
-    res.json({x:'y',url:req.url});
+app.get(['/xxx', '/yyy'], (req, res) => {
+    res.json({ x: 'y', url: req.url });
 });
 
-app.get(/^\/m\/09\d{2}-?\d{3}-?\d{3}$/i,(req,res)=>{
+app.get(/^\/m\/09\d{2}-?\d{3}-?\d{3}$/i, (req, res) => {
     let u = req.url.split('?')[0];
     u = u.slice(3);
     //i不區分大小寫
     //用空字串取代掉所有的-
-    u = u.replace(/-/g,''); //u = u.split('-').join('');
+    u = u.replace(/-/g, ''); //u = u.split('-').join('');
 
-    res.json({mobile:u});
+    res.json({ mobile: u });
 });
 
-app.use('/admin2',require('./routes/admin2'));
-app.use('/address-book',require('./routes/address-book'));
+app.use('/admin2', require('./routes/admin2'));
+app.use('/address-book', require('./routes/address-book'));
 
-app.get('/try-session',(req,res)=>{
-req.session.my_var = req.session.my_var || 0;
-req.session.my_var++;
-res.json(req.session);
+app.get('/try-session', (req, res) => {
+    req.session.my_var = req.session.my_var || 0;
+    req.session.my_var++;
+    res.json(req.session);
 });
 
-app.get('/try-moment',(req,res)=>{
+app.get('/try-moment', (req, res) => {
     const fm = 'YYYY-MM-DD HH:mm:ss';
     res.json({
         mo1: moment(new Date()).format(fm),
@@ -178,14 +182,14 @@ app.get('/try-moment',(req,res)=>{
         mo3: moment(req.session.cookie.expires).format(fm),
         mo4: moment(req.session.cookie.expires).tz('Europe/London').format(fm),
     })
-    });
+});
 
-app.get('/try-db',async(req,res)=>{
-        const sql = "SELECT * FROM address_book LIMIT 5";
+app.get('/try-db', async (req, res) => {
+    const sql = "SELECT * FROM address_book LIMIT 5";
 
-        const [rs, fields] = await db.query(sql);
-        res.json(rs);
-        });
+    const [rs, fields] = await db.query(sql);
+    res.json(rs);
+});
 //********* 所有路由的最後面
 app.use((req, res) => {
     // res.type('text/plain')
