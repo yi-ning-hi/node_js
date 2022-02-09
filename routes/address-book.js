@@ -62,6 +62,11 @@ router.get('/list', async (req, res) => {
 router.get('/api/list', async (req, res) => {
     res.json(await getListData(req,res));
 });
+router.get('/add', async (req, res) => {
+    res.render('address-book/add');
+});
+router.post('/add', async (req, res) => {
+});
 
 // router.get('/list', async (req, res) => {
 //     const perPage = 5; //每頁最多幾筆
