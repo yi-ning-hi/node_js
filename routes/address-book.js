@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('./../modules/connect-db');
+const upload = require('./../modules/upload-imgs');
 
 const router = express.Router();
 
@@ -14,11 +15,11 @@ async function getListData(req, res) {
     let search = req.query.search ? req.query.search : '';
     search = search.trim(); //去掉頭尾空白
     let sqlWhere = ' WHERE 1 ';
-    if(search){
-        sqlWhere += ` AND \`name\` LIKE ${db.escape('%'+search+'%')}`;
+    if (search) {
+        sqlWhere += ` AND \`name\` LIKE ${db.escape('%' + search + '%')}`;
         conditions.search = search;
     }
- 
+
     const output = {
         // success:false,
         perPage,
@@ -43,9 +44,9 @@ async function getListData(req, res) {
         }
         const sql = `SELECT * FROM \`address_book\` ${sqlWhere} ORDER BY sid DESC LIMIT ${perPage * (page - 1)},${perPage}`;
         // return res.send(sql);//除錯用
-        
+
         const [rs2] = await db.query(sql);
-        rs2.forEach(el=>{
+        rs2.forEach(el => {
             el.birthday = res.locals.toDateString(el.birthday);
         });
         output.rows = rs2;
@@ -57,17 +58,30 @@ async function getListData(req, res) {
 }
 
 router.get('/list', async (req, res) => {
-    res.render('address-book/list',await getListData(req,res));
+    res.render('address-book/list', await getListData(req, res));
 });
 router.get('/api/list', async (req, res) => {
-    res.json(await getListData(req,res));
+    res.json(await getListData(req, res));
 });
 router.get('/add', async (req, res) => {
     res.render('address-book/add');
 });
-router.post('/add', async (req, res) => {
+// multiple/form-data
+router.post('/add2', upload.none(), async (req, res) => {
+    res.json(req.body);
 });
+//application/x-www-form-urlencoded
+//application/json
 
+router.post('/add', async (req, res) => {
+
+    const sql = "INSERT INTO address_book SET ?";
+    const obj = {...req.body, created_at: new Date()};
+
+    const [result] = await db.query(sql, [obj]);
+    console.log(result);
+    res.json(result);
+});
 // router.get('/list', async (req, res) => {
 //     const perPage = 5; //每頁最多幾筆
 

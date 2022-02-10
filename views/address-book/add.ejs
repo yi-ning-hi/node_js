@@ -7,6 +7,7 @@
                         <div class="card-body">
                             <h5 class="card-title">新增資料</h5>
                             <form name="form1" onsubmit="checkForm(); return false;">
+                                
                                 <div class="mb-3">
                                     <label for="name" class="form-label">name</label>
                                     <input type="text" class="form-control" id="name" name="name">
@@ -17,16 +18,16 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="mobile" class="form-label">mobile</label>
-                                    <input type="text" class="form-control"id="mobile" name="mobile">
-                                  </div>
-                                  <div class="mb-3">
+                                    <input type="text" class="form-control" id="mobile" name="mobile">
+                                </div>
+                                <div class="mb-3">
                                     <label for="birthday" class="form-label">birthday</label>
-                                    <input type="date" class="form-control"id="birthday" name="birthday">
-                                  </div>
-                                  <div class="mb-3">
+                                    <input type="date" class="form-control" id="birthday" name="birthday">
+                                </div>
+                                <div class="mb-3">
                                     <label for="address" class="form-label">address</label>
-                                    <input type="text" class="form-control"id="address" name="address">
-                                  </div>
+                                    <input type="text" class="form-control" id="address" name="address">
+                                </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </form>
                         </div>
@@ -36,8 +37,51 @@
         </div>
         <%- include('../parts/scripts') %>
             <script>
-            function checkForm(){
-                
-            }
-        </script>
+                function checkForm() {
+                    const fd = new FormData(document.form1);
+                    // console.log(fd);
+                    // console.log([...fd]);
+                    const usp = new URLSearchParams(fd);
+                    // console.log([...usp]);
+                    const dataObj = {};
+                    for (let i of fd) {
+                        console.log("i", i);
+                        console.log("i[0]", i[0]);
+                        console.log("i[1]", i[1]);
+                        dataObj[i[0]] = i[1];
+                    }
+                    console.log({dataObj});
+
+                    // TODO:檢查資料格式
+
+                    // fetch('',{
+                    //     method: 'POST',
+                    //     body:fd,
+                    // }).then(r=>r.json()).then(obj=>{
+                    //     console.log(obj);
+                    // });
+
+                    fetch('', {
+                        method: 'POST',
+                        body: JSON.stringify(dataObj),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(r => r.json())
+                        .then(obj => {
+                            console.log(obj);
+                        });
+                }
+
+        // let Joi = joi;
+        // const schema = Joi.object({
+        //     username: Joi.string().alphanum().min(5).max(30).required(),
+        //     age: Joi.number().required(),
+        // });
+
+        // console.log(schema.validate({ username: 'ally', age: 'aaa' }));
+        // console.log(schema.validate({ username: 'ally', age: 'aaa' },{abortEarly:false})); //abortEarly:false遇到錯誤不會停下，繼續判別
+        // console.log(schema.validate({ username: 'kally', age: '23' }));
+
+            </script>
             <%- include('../parts/html-foot') %>

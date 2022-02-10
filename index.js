@@ -23,9 +23,10 @@ app.set('view engine', 'ejs')
 // });
 
 // Top-level middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: false }));//application/x-www-urlencoded
+app.use(express.json());//application/json
 app.use(express.static('public'));
+app.use('/joi',express.static('node_modules/joi/dist')); 
 
 app.use(session({
     saveUninitialized: false,//儲存未初始化
