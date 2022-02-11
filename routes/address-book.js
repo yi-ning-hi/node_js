@@ -56,7 +56,9 @@ async function getListData(req, res) {
     // res.json(output);
     // res.render('address-book/list', output);
 }
-
+router.get('/', async (req, res) => {
+    res.redirect('/address-book/list');
+});
 router.get('/list', async (req, res) => {
     res.render('address-book/list', await getListData(req, res));
 });
@@ -74,14 +76,63 @@ router.post('/add2', upload.none(), async (req, res) => {
 //application/json
 
 router.post('/add', async (req, res) => {
+    const output = {
+        success: false,
+        error: ''
+    };
+    // const sql = "INSERT INTO address_book SET ?";
+    // const obj = {...req.body, created_at: new Date()};
 
-    const sql = "INSERT INTO address_book SET ?";
-    const obj = {...req.body, created_at: new Date()};
+    // const [result] = await db.query(sql, [obj]);
+    // console.log(result);
 
-    const [result] = await db.query(sql, [obj]);
+    const sql = "INSERT INTO `address_book`(`name`, `email`, `mobile`, `birthday`, `address`, `created_at`) VALUES (?,?,?,?,?,NOW())"
+    const [result] = await db.query(sql, [
+        req.body.name,
+        req.body.email,
+        req.body.mobile,
+        req.body.birthday || null,
+        req.body.address,
+    ]);
     console.log(result);
-    res.json(result);
+    output.success = !!result.affectedRows;
+    output.result = result;
+    res.json(output);
 });
+
+router.get('/delete/:sid', async (req, res) => {
+    // req.get('Referer') //從哪裡來
+    const sql = "DELETE FROM address_book WHERE sid=?";
+    const [result] = await db.query(sql,[req.params.sid]);
+    res.redirect('/address-book/list');
+});
+
+router.get('/edit/:sid', async (req, res) => {
+    const sql = "SELECT * FROM address_book WHERE sid=?";
+    const [rs] = await db.query(sql,[req.params.sid]);
+    if(! rs.length){
+        return res.redirect('/address-book/list');
+    }
+    res.render('address-book/edit',rs[0]);
+});
+
+router.post('/edit/:sid', async (req, res) => {
+    const output = {
+        success:false,
+        error:''
+    };
+
+    const sql = "UPDATE `address_book` SET ? WHERE sid= ?";
+
+    const [result] = await db.query(sql, [req.body, req.params.sid]);
+
+    console.log(result);
+    output.success = !! result.changedRows;
+    output.result = result;
+
+    res.json(output);
+})
+
 // router.get('/list', async (req, res) => {
 //     const perPage = 5; //每頁最多幾筆
 

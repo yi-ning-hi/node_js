@@ -10,6 +10,9 @@ const upload = require(__dirname + '/modules/upload-imgs')
 const fs = require('fs').promises;
 const db = require('./modules/connect-db');
 const sessionStore = new MysqlStore({}, db)
+const cors = require('cors');
+const fetch = require('node-fetch');
+const axios = require('axios');
 
 const app = express();
 
@@ -23,10 +26,12 @@ app.set('view engine', 'ejs')
 // });
 
 // Top-level middleware
+
+app.use(cors());
 app.use(express.urlencoded({ extended: false }));//application/x-www-urlencoded
 app.use(express.json());//application/json
 app.use(express.static('public'));
-app.use('/joi',express.static('node_modules/joi/dist')); 
+app.use('/joi', express.static('node_modules/joi/dist'));
 
 app.use(session({
     saveUninitialized: false,//儲存未初始化
@@ -191,6 +196,22 @@ app.get('/try-db', async (req, res) => {
     const [rs, fields] = await db.query(sql);
     res.json(rs);
 });
+
+app.get('/yahoo', async (req, res) => {
+
+    fetch('https://tw.yahoo.com/')
+    .then(r => r.text())
+    .then(txt => {
+        res.send(txt);
+    });
+});
+
+app.get('/yahoo2',async (req, res) => {
+    const response = await axios.get('https://tw.yahoo.com/');
+    console.log(response);
+    res.send(response.data);
+});
+
 //********* 所有路由的最後面
 app.use((req, res) => {
     // res.type('text/plain')
