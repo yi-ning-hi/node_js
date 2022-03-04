@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="fontawesome/css/all.css">
+</head>
+
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Navbar</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Dropdown
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled">Disabled</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">姓名</th>
+                            <th scope="col">手機</th>
+                            <th scope="col">email</th>
+                            <th scope="col">生日</th>
+                            <th scope="col">地址</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="bootstrap/js/bootstrap.js"></script>
+    <script>
+        const tbody = $('tbody');
+        const rowTpl = o => `
+            <tr>
+                <td>${o.sid}</td>
+                <td>${o.name}</td>
+                <td>${o.mobile}</td>
+                <td>${o.email}</td>
+                <td>${o.birthday}</td>
+                <td>${o.address}</td>
+      </tr> `;
+
+        function getData() {
+            fetch('/address-book/api/list' + location.search)
+                .then(r => r.json())
+                .then(obj => {
+                    console.log(obj);
+                    tbody.html(obj.rows.map(el => rowTpl(el)).join(''));
+                });
+        }
+        getData();
+
+        // document.querySelector('.btn-toolbar').addEventListener(click, event => {
+        //     switch (event.target.id) {
+        //         case '1':
+        //             history.pushState({ a: 1 }, '', '?page=1');
+        //             break;
+        //         case '2':
+        //             history.pushState({ b: 2 }, '', '?page=2');
+
+        //             break;
+        //         case '3':
+        //             history.pushState({ c: 3 }, '', '?page=3');
+
+        //             break;
+        //     }
+        // });
+        let Joi = joi;
+        const schema = Joi.object({
+            username: Joi.string().alphanum().min(3).max(30).required(),
+            age: Joi.number().required(),
+        });
+
+        console.log(schema.validate({ username: 'kally', age: '23' }));
+    </script>
+</body>
+
+</html>
