@@ -36,13 +36,22 @@
     console.log({sendObj});
     const r =await fetch("",{
         method: "POST",
-        hearders:{
+        headers:{
             "Content-Type":"application/json"
         },
         body: JSON.stringify(sendObj),
     });
     const obj = await r.json();
     console.log(obj);
+    if(obj.success){
+        localStorage.setItem("admin_info",JSON.stringify(obj.info)
+        );
+        localStorage.setItem("admin_token",obj.token
+        );
+        alert('登入成功')
+    }else{
+        alert(obj.error || "登入失敗")
+    }
     // const usp = new URLSearchParams(new FormData(document.form1));
 
     // const r = await fetch('', {
