@@ -55,6 +55,16 @@ app.use((req, res, next) => {
   // template helper functions 樣版輔助函式
   res.locals.toDateString = (d) => moment(d).format("YYYY-MM-DD");
   res.locals.toDatetimeString = (d) => moment(d).format("YYYY-MM-DD HH:mm:ss");
+
+    res.locals.auth = null; // 自訂的變數，設定有沒有身份驗證，預設值為null
+    let auth = req.get('Authorization');
+    if(auth && auth.indexOf('Bearer ')===0){
+      auth = auth.slice(7);
+      try{
+        const payload = jwt.verify(auth,process.env.JWT_KEY);
+        res.locals.auth = payload;
+      }catch(ex){}
+    }
   next();
 });
 

@@ -19,7 +19,7 @@
             }
             const r =await fetch('/address-book/api/list',{
                 headers: {
-                    Authorization:'Bearer'+admin_token,
+                    Authorization:'Bearer' + admin_token,
                 }
             });
             const obj =await r.json();
